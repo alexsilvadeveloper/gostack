@@ -1,0 +1,17 @@
+{% for appointment in appointmentsNow %}
+<li class="appointment">
+  <div class="{% if appointment.available %}disabled{% endif %}">
+    <img src="/files/{{ appointment.user.avatar }}" />
+    <strong
+      >{{ appointment.user.name }} <br />
+      {{ appointment.date | date('HH:mm') }}</strong
+    >
+  </div>
+  <!-- <a href="/app/appointments/new/{{ provider.id }}">+</a> -->
+</li>
+{% else %}
+<li class="none">
+  <div><strong>Nenhum agendamento</strong></div>
+  <!-- <a href="/app/appointments/new/{{ provider.id }}">+</a> -->
+</li>
+{% endfor %}

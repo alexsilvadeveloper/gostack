@@ -1,0 +1,8 @@
+node_modules/
+tmp/
+.vscode/
+images/
+migrations/
+seeders/
+database.js
+*.lock

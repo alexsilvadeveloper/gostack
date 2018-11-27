@@ -1,0 +1,67 @@
+{% extends "_layouts/default.njk" %} {% block body %}
+<div class="content">
+  <strong>Olá, {{ user.name }}</strong> {% if user.provider === true %}
+  <p id="appointment">Agendamentos para hoje:</p>
+  <ul class="appointments"></ul>
+  <form>
+    <input type="text" class="flatpickr" placeholder="Escolhar uma data" />
+  </form>
+  {% else %}
+  <p>Inicie um agendamento escolhendo um profissional abaixo:</p>
+
+  <ul class="providers">
+    {% for provider in providers %}
+    <li class="provider">
+      <div>
+        <img src="/files/{{ provider.avatar }}" />
+        <strong>{{ provider.name }}</strong>
+      </div>
+      <a href="/app/appointments/new/{{ provider.id }}">+</a>
+    </li>
+    {% endfor %}
+  </ul>
+  {% endif %}
+
+  <a href="/app/logout" class="logout">Sair</a>
+</div>
+<script>
+  flatpickr(".flatpickr", {
+    defaultDate: new Date(),
+    minDate: new Date(),
+    dateFormat: "d/m/Y",
+    onChange: function(date) {
+      var now = new Date().toLocaleDateString();
+      var tomorrow = new Date();
+      tomorrow.setDate(tomorrow.getDate() + 1);
+      tomorrow = tomorrow.toLocaleDateString();
+
+      if (date[0].toLocaleDateString() === tomorrow) {
+        document.getElementById("appointment").innerHTML =
+          "Agendamentos para amanhã:";
+      } else if (date[0].toLocaleDateString() !== now) {
+        document.getElementById(
+          "appointment"
+        ).innerHTML = `Agendamentos para ${date[0].toLocaleDateString()}:`;
+      } else {
+        document.getElementById("appointment").innerHTML =
+          "Agendamentos para hoje:";
+      }
+
+      fetch(`/app/appointments/${date[0].getTime()}`).then(function(response) {
+        response.text().then(function(html) {
+          document.getElementsByClassName("appointments")[0].innerHTML = html;
+        });
+      });
+    }
+  });
+
+  document.querySelector("body").onload = function() {
+    var date = new Date();
+    fetch(`/app/appointments/${date.getTime()}`).then(function(response) {
+      response.text().then(function(html) {
+        document.getElementsByClassName("appointments")[0].innerHTML = html;
+      });
+    });
+  };
+</script>
+{% endblock %}

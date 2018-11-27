@@ -1,0 +1,1 @@
+createdb -h localhost -U docker -p 25432 gonodemodulo2
